@@ -105,24 +105,12 @@ binary_sensor:
     <<: *input_zone_common
 
   - id: zone2
-    name: Part Armed
+    name: Partial
     device_class: light
     pin:
       number: $zone2
       mode: INPUT_PULLUP
     <<: *input_zone_common
-#    on_state:
-#      if:
-#        condition:
-#          binary_sensor.is_on: zone2
-#        then:
-#          - switch.template.publish:
-#              id: part_arm_template_swi
-#              state: ON
-#        else:
-#          - switch.template.publish:
-#              id: part_arm_template_swi
-#              state: OFF
 
   - id: zone3
     name: Burglar Alarm
@@ -173,14 +161,14 @@ binary_sensor:
     <<: *input_zone_common
 
   - id: zone9
-    name: Unused 9
+    name: Alarm Panel Tamper
     pin:
       number: $zone9
       mode: INPUT
     <<: *input_zone_common
 
   - id: zone10
-    name: Unused 10
+    name: Key Fob Garage
     pin:
       number: $zone10
       mode: INPUT
@@ -200,21 +188,22 @@ binary_sensor:
       number: $zone12
       mode: INPUT
     <<: *input_zone_common
+cover:
 
 switch:   
 
   - id: alarm2
-    name: Garage Open/Close
+    name: Garage Trigger
     icon: mdi:garage
     pin: $alarm2
     platform: gpio
     restore_mode: RESTORE_DEFAULT_OFF
     on_turn_on:
-      - delay: 1000ms
+      - delay: 1s
       - switch.turn_off: alarm2
 
   - id: alarm3
-    name: Part Arm On/Off
+    name: Part Arm Trigger
     pin: $out1
     platform: gpio
     restore_mode: RESTORE_DEFAULT_OFF
@@ -252,7 +241,6 @@ switch:
     name: "Burglary"
     restore_mode: RESTORE_DEFAULT_OFF
     id: burglary_template_swi
-    icon: mdi:lightbulb
     optimistic: true
     lambda: |-
       if (id(zone3).state) {
@@ -260,6 +248,13 @@ switch:
       } else {
         return false;
       }
+
+  - platform: template
+    name: "Garage Open"
+    id: garage_open_swi
+    optimistic: true
+
+
 ####
 # PACKAGES
 # Each package includes the alarm panel feature

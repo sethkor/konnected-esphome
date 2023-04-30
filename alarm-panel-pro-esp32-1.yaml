@@ -199,7 +199,7 @@ binary_sensor:
 
 switch:
   - id: alarm2
-    name: Arm/Disarm
+    name: Arm Trigger
     pin: $alarm2
     platform: gpio
     restore_mode: RESTORE_DEFAULT_OFF
@@ -217,12 +217,6 @@ switch:
       - delay: 1000ms
       - switch.turn_off: alarm3
 
-#  - id: virtual-armed
-#    name: Armed
-#    icon: mdi:light
-#    device_class: switch
-#    on_state:
-#      then:
 ####
 # PACKAGES
 # Each package includes the alarm panel feature
