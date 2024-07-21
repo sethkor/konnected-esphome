@@ -97,6 +97,8 @@ binary_sensor:
   - id: zone1
     name: Entry
     device_class: motion
+    filters:
+      - delayed_off: 10s
     pin:
       number: $zone1
       mode: INPUT_PULLUP
@@ -105,6 +107,8 @@ binary_sensor:
   - id: zone2
     name: Laundry
     device_class: motion
+    filters:
+      - delayed_off: 10s
     pin:
       number: $zone2
       mode: INPUT_PULLUP
@@ -113,14 +117,18 @@ binary_sensor:
   - id: zone3
     name: Guest Bedroom
     device_class: motion
+    filters:
+      - delayed_off: 10s
     pin:
       number: $zone3
       mode: INPUT_PULLUP
     <<: *input_zone_common
 
   - id: zone4
-    name: Seths Office
+    name: Seth's Office
     device_class: motion
+    filters:
+      - delayed_off: 10s
     pin:
       number: $zone4
       mode: INPUT_PULLUP
@@ -128,7 +136,7 @@ binary_sensor:
 
   - id: zone5
     name: Garage Door
-    device_class: door
+    device_class: garage_door
     pin:
       number: $zone5
       mode: INPUT_PULLUP
@@ -143,7 +151,7 @@ binary_sensor:
     <<: *input_zone_common
 
   - id: zone7    
-    name: Entry Garage Lock Solenoid
+    name: Entry Garage Door Solenoid
     device_class: door
     pin:
       number: $zone7
@@ -168,7 +176,6 @@ binary_sensor:
 
   - id: zone10
     name: Unused 10
-    device_class: door
     pin:
       number: $zone10
       mode: INPUT
@@ -190,16 +197,9 @@ binary_sensor:
       mode: INPUT
     <<: *input_zone_common
 
-switch:   
-  - id: alarm1
-    name: Alarm
-    pin: $alarm1
-    platform: gpio
-    icon: mdi:bullhorn
-
-
+switch:
   - id: alarm2
-    name: Arm/Disarm
+    name: Arm Trigger
     pin: $alarm2
     platform: gpio
     restore_mode: RESTORE_DEFAULT_OFF
@@ -211,6 +211,7 @@ switch:
     name: Panic
     pin: $out1
     platform: gpio
+    icon: mdi:bullhorn
     restore_mode: RESTORE_DEFAULT_OFF
     on_turn_on:
       - delay: 1000ms
@@ -276,6 +277,8 @@ logger:
 # Enables the native API for Home Assistant
 # more: https://esphome.io/components/api.html
 api:
+  encryption:
+    key: 2RDmXygz+FV7iNbmS6aNpnAq74trdWgqdzNw7BAaA04=
 
 #### 
 # OTA UPDATES

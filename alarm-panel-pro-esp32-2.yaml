@@ -96,6 +96,8 @@ binary_sensor:
 
   - id: zone1
     name: Rumpus
+    filters:
+      - delayed_off: 10s
     device_class: motion
     pin:
       number: $zone1
@@ -103,8 +105,8 @@ binary_sensor:
     <<: *input_zone_common
 
   - id: zone2
-    name: Part Armed
-    device_class: power
+    name: Partial
+    device_class: light
     pin:
       number: $zone2
       mode: INPUT_PULLUP
@@ -120,7 +122,7 @@ binary_sensor:
 
   - id: zone4
     name: Armed
-    device_class: door
+    device_class: light
     pin:
       number: $zone4
       mode: INPUT_PULLUP
@@ -159,16 +161,14 @@ binary_sensor:
     <<: *input_zone_common
 
   - id: zone9
-    name: Unused 9
-    device_class: motion
+    name: Alarm Panel Tamper
     pin:
       number: $zone9
       mode: INPUT
     <<: *input_zone_common
 
   - id: zone10
-    name: Unused 10
-    device_class: power
+    name: Key Fob Garage
     pin:
       number: $zone10
       mode: INPUT
@@ -176,7 +176,6 @@ binary_sensor:
 
   - id: zone11
     name: Unused 11
-    device_class: light
     pin:
       number: $zone11
       mode: INPUT
@@ -189,32 +188,72 @@ binary_sensor:
       number: $zone12
       mode: INPUT
     <<: *input_zone_common
+cover:
 
 switch:   
-  - id: alarm1
-    name: Alarm 1
-    pin: $alarm1
-    platform: gpio
-    icon: mdi:bullhorn
-
 
   - id: alarm2
-    name: Garage Open/Close
+    name: Garage Trigger
+    icon: mdi:garage
     pin: $alarm2
     platform: gpio
     restore_mode: RESTORE_DEFAULT_OFF
     on_turn_on:
-      - delay: 1000ms
+      - delay: 1s
       - switch.turn_off: alarm2
 
   - id: alarm3
-    name: Part Arm on/Off
+    name: Part Arm Trigger
     pin: $out1
     platform: gpio
     restore_mode: RESTORE_DEFAULT_OFF
     on_turn_on:
       - delay: 1000ms
       - switch.turn_off: alarm3
+
+  - platform: template
+    name: "Part Armed"
+    restore_mode: RESTORE_DEFAULT_OFF
+    id: part_arm_template_swi
+    icon: mdi:lightbulb
+    optimistic: true
+    lambda: |-
+      if (id(zone2).state) {
+        return true;
+      } else {
+        return false;
+      }
+
+  - platform: template
+    name: "Armed"
+    restore_mode: RESTORE_DEFAULT_OFF
+    id: arm_template_swi
+    icon: mdi:lightbulb
+    optimistic: true
+    lambda: |-
+      if (id(zone4).state) {
+        return true;
+      } else {
+        return false;
+      }
+
+  - platform: template
+    name: "Burglary"
+    restore_mode: RESTORE_DEFAULT_OFF
+    id: burglary_template_swi
+    optimistic: true
+    lambda: |-
+      if (id(zone3).state) {
+        return true;
+      } else {
+        return false;
+      }
+
+  - platform: template
+    name: "Garage Open"
+    id: garage_open_swi
+    optimistic: true
+
 
 ####
 # PACKAGES
@@ -276,7 +315,8 @@ logger:
 # Enables the native API for Home Assistant
 # more: https://esphome.io/components/api.html
 api:
-
+  encryption:
+    key: gRkGAqJDmO5cShtcMYUZWxlcCaRvJ5+WkvwglxFPnrc=
 #### 
 # OTA UPDATES
 # Enables over-the-air updates
