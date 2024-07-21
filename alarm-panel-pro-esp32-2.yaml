@@ -175,7 +175,7 @@ binary_sensor:
     <<: *input_zone_common
 
   - id: zone11
-    name: Unused 11
+    name: Alarm
     pin:
       number: $zone11
       mode: INPUT
@@ -188,7 +188,6 @@ binary_sensor:
       number: $zone12
       mode: INPUT
     <<: *input_zone_common
-cover:
 
 switch:   
 
@@ -197,7 +196,7 @@ switch:
     icon: mdi:garage
     pin: $alarm2
     platform: gpio
-    restore_mode: RESTORE_DEFAULT_OFF
+    restore_mode: ALWAYS_OFF
     on_turn_on:
       - delay: 1s
       - switch.turn_off: alarm2
@@ -206,7 +205,7 @@ switch:
     name: Part Arm Trigger
     pin: $out1
     platform: gpio
-    restore_mode: RESTORE_DEFAULT_OFF
+    restore_mode: ALWAYS_OFF
     on_turn_on:
       - delay: 1000ms
       - switch.turn_off: alarm3
@@ -249,12 +248,21 @@ switch:
         return false;
       }
 
+cover:
   - platform: template
-    name: "Garage Open"
-    id: garage_open_swi
+    name: Double Garage
+    device_class: garage
+    id: double_garage_swi
+    restore_mode: RESTORE
     optimistic: true
 
-
+lock:
+  - platform: template
+    name: Test Lock
+#    device_class: lock
+    id: lock_swi
+#    restore_mode: RESTORE
+    optimistic: true
 ####
 # PACKAGES
 # Each package includes the alarm panel feature
